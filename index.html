@@ -1540,7 +1540,7 @@
   </script>
 <script>
   // 1. Paste your Google Apps Script Web App URL right here:
-  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzfT0fWfV28LUqKWK3N6Avg5WqSIOs4vwdekqYw1HPXbTBK1Z8uGWB7G_iCM1ySJ2lX/exec';
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwaxBTDEahvHgs5eFfT1M1XFX4fBUML3I4n1L0KCU4/dev;
 
   // Order form submission handler
   document.getElementById('orderForm').addEventListener('submit', async function(e) {
@@ -1566,7 +1566,7 @@
     localStorage.setItem('binayBrosOrders', JSON.stringify(savedOrders));
 
     // Send to Google Sheets if URL is provided
-    if (SCRIPT_URL && SCRIPT_URL !== 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL') {
+    if (SCRIPT_URL && SCRIPT_URL !== 'https://script.google.com/macros/s/AKfycbwaxBTDEahvHgs5eFfT1M1XFX4fBUML3I4n1L0KCU4/dev') {
       try {
         await fetch(SCRIPT_URL, {
           method: 'POST',
