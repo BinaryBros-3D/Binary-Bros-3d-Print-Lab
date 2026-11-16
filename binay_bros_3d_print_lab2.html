@@ -1,0 +1,1542 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Binay Bros 3D Print Lab | Precision 3D Printing &amp; Nationwide PH Shipping</title>
+  
+  <!-- Custom Inline SVG Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f172a'/%3E%3Cpath d='M32 10L52 21.5V44.5L32 56L12 44.5V21.5L32 10Z' fill='none' stroke='%2306b6d4' stroke-width='4'/%3E%3Cpath d='M32 33L52 21.5M32 33V56M32 33L12 21.5' stroke='%23f97316' stroke-width='3.5'/%3E%3C/svg%3E" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            slateDark: '#090d16',
+            cardDark: '#111827',
+            borderDark: '#1e293b',
+            cyanGlow: '#06b6d4',
+            orangePulse: '#f97316',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    * {
+      -webkit-tap-highlight-color: transparent;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #090d16;
+      color: #f1f5f9;
+      overflow-x: hidden;
+    }
+
+    /* Hide scrollbars on horizontal mobile nav */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* Slide transition animation */
+    .slide-panel {
+      display: none;
+      animation: slideFadeIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .slide-panel.active {
+      display: block;
+    }
+
+    @keyframes slideFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Subtle cyber grid background */
+    .bg-cyber-grid {
+      background-image: radial-gradient(rgba(6, 182, 212, 0.12) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+
+    /* Custom range slider styling */
+    input[type="range"] {
+      accent-color: #06b6d4;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-cyber-grid selection:bg-cyan-500 selection:text-slate-950">
+
+  <!-- TOP BRAND HEADER & STICKY 7-SLIDE NAVIGATION -->
+  <header class="sticky top-0 z-40 bg-slate-950/90 backdrop-blur-md border-b border-slate-800/90 shadow-lg">
+    <div class="max-w-6xl mx-auto px-4 pt-3 pb-2">
+      <!-- Top Brand Bar -->
+      <div class="flex items-center justify-between gap-2 mb-3">
+        <div class="flex items-center gap-3 cursor-pointer" onclick="switchSlide(0)">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500/20 to-orange-500/20 border border-cyan-500/40 flex items-center justify-center shadow-inner">
+            <svg class="w-6 h-6" viewBox="0 0 64 64" fill="none">
+              <path d="M32 8L54 20.5V45.5L32 58L10 45.5V20.5L32 8Z" stroke="#06b6d4" stroke-width="4.5" stroke-linejoin="round"/>
+              <path d="M32 33L54 20.5M32 33V58M32 33L10 20.5" stroke="#f97316" stroke-width="4" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h1 class="font-extrabold text-base sm:text-lg tracking-tight text-white leading-none">
+                BINAY BROS <span class="text-cyan-400">3D</span>
+              </h1>
+              <span class="hidden sm:inline-block text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full bg-orange-500/15 text-orange-400 border border-orange-500/30">
+                Print Lab
+              </span>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-0.5">Davao City • Nationwide PH Shipping</p>
+          </div>
+        </div>
+
+        <!-- Live Database Status & Quick Order Counter -->
+        <div class="flex items-center gap-2">
+          <div id="db-status-badge" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-[11px] font-mono text-emerald-400">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span id="db-status-text">DB Ready</span>
+          </div>
+          <button onclick="switchSlide(5)" class="relative p-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-cyan-400 transition" title="View Saved Orders">
+            <i class="fa-solid fa-box-archive text-sm"></i>
+            <span id="nav-order-count" class="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 rounded-full bg-orange-500 text-slate-950 font-bold text-[10px] flex items-center justify-center">0</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 7-Slide Interactive Tab Bar (Touch-Scrollable on Mobile) -->
+      <nav aria-label="Slide Navigation" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1" id="slide-tabs">
+        <button data-slide="0" onclick="switchSlide(0)" class="slide-tab active flex-shrink-0 flex items-center gap-2 px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-cyan-500 text-slate-950 shadow-md shadow-cyan-500/20">
+          <i class="fa-solid fa-layer-group"></i>
+          <span>1. About Us</span>
+        </button>
+        <button data-slide="1" onclick="switchSlide(1)" class="slide-tab flex-shrink-0 flex items-center gap-2 px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-slate-900/90 text-slate-300 hover:text-white border border-slate-800">
+          <i class="fa-solid fa-cubes"></i>
+          <span>2. Catalog</span>
+        </button>
+        <button data-slide="2" onclick="switchSlide(2)" class="slide-tab flex-shrink-0 flex items-center gap-2 px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-slate-900/90 text-slate-300 hover:text-white border border-slate-800">
+          <i class="fa-solid fa-calculator"></i>
+          <span>3. Calculator</span>
+        </button>
+        <button data-slide="3" onclick="switchSlide(3)" class="slide-tab flex-shrink-0 flex items-center gap-2 px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-slate-900/90 text-slate-300 hover:text-white border border-slate-800">
+          <i class="fa-solid fa-file-arrow-up"></i>
+          <span>4. Custom Order</span>
+        </button>
+        <button data-slide="4" onclick="switchSlide(4)" class="slide-tab flex-shrink-0 flex items-center gap-2 px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-slate-900/90 text-slate-300 hover:text-white border border-slate-800">
+          <i class="fa-solid fa-credit-card"></i>
+          <span>5. GCash &amp; Card</span>
+        </button>
+        <button data-slide="5" onclick="switchSlide(5)" class="slide-tab flex-shrink-0 flex items-center gap-2 px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-slate-900/90 text-slate-300 hover:text-white border border-slate-800">
+          <i class="fa-solid fa-cart-shopping"></i>
+          <span>6. Order Form &amp; DB</span>
+        </button>
+        <button data-slide="6" onclick="switchSlide(6)" class="slide-tab flex-shrink-0 flex items-center gap-2 px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-slate-900/90 text-slate-300 hover:text-white border border-slate-800">
+          <i class="fa-solid fa-truck-ramp-box"></i>
+          <span>7. Package Tracker</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- TOAST NOTIFICATION BANNER -->
+  <div id="toast-container" class="fixed bottom-20 sm:bottom-6 right-4 left-4 sm:left-auto sm:w-96 z-50 pointer-events-none flex flex-col gap-2"></div>
+
+  <!-- MAIN SLIDE VIEWPORT -->
+  <main id="slides-viewport" class="flex-1 max-w-6xl w-full mx-auto px-4 py-6 pb-24">
+
+    <!-- =================================================================== -->
+    <!-- SLIDE 1: ABOUT US                                                   -->
+    <!-- =================================================================== -->
+    <section id="slide-0" class="slide-panel active">
+      <div class="rounded-3xl bg-gradient-to-br from-slate-900 via-slate-900 to-slate-950 border border-slate-800 p-6 sm:p-10 shadow-2xl relative overflow-hidden">
+        <div class="absolute -top-24 -right-24 w-72 h-72 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-24 -left-24 w-72 h-72 bg-orange-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <div class="lg:col-span-7 space-y-5">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-mono">
+              <i class="fa-solid fa-location-dot"></i>
+              <span>Davao City, Philippines • Nationwide Dispatch</span>
+            </div>
+
+            <h2 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
+              Industrial Precision. <br/>
+              <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-orange-400">
+                Layer by Layer.
+              </span>
+            </h2>
+
+            <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+              Welcome to <strong class="text-white">Binay Bros 3D Print Lab</strong>. Based in Davao City, we specialize in high-detail articulated prints, functional mechanical components, and custom client STL fabrication shipped securely across the Philippines.
+            </p>
+
+            <div class="flex flex-wrap gap-3 pt-2">
+              <button onclick="switchSlide(1)" class="px-5 py-3.5 rounded-2xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-sm transition shadow-lg shadow-cyan-500/25 flex items-center gap-2">
+                <span>Explore 3D Catalog</span>
+                <i class="fa-solid fa-arrow-right"></i>
+              </button>
+              <button onclick="switchSlide(6)" class="px-5 py-3.5 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 font-semibold text-sm transition flex items-center gap-2">
+                <i class="fa-solid fa-magnifying-glass text-cyan-400"></i>
+                <span>Track Package Status</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Right Visual Tech Card -->
+          <div class="lg:col-span-5">
+            <div class="rounded-2xl bg-slate-950/90 border border-slate-800 p-5 space-y-4 shadow-xl">
+              <div class="rounded-xl bg-slate-900/90 border border-slate-800/80 p-4 flex items-center justify-center">
+                <svg class="w-full max-w-[260px] h-40" viewBox="0 0 260 160" fill="none">
+                  <rect x="20" y="132" width="220" height="10" rx="5" fill="#1e293b" stroke="#334155" stroke-width="1.5"/>
+                  <line x1="35" y1="128" x2="225" y2="128" stroke="#06b6d4" stroke-width="2" stroke-dasharray="6 4"/>
+                  <path d="M85 126L98 92H162L175 126H85Z" fill="url(#printGrad)" stroke="#06b6d4" stroke-width="2"/>
+                  <line x1="90" y1="115" x2="170" y2="115" stroke="#0f172a" stroke-width="1.5"/>
+                  <line x1="94" y1="104" x2="166" y2="104" stroke="#0f172a" stroke-width="1.5"/>
+                  <rect x="108" y="18" width="44" height="34" rx="6" fill="#1e293b" stroke="#f97316" stroke-width="2"/>
+                  <rect x="116" y="25" width="28" height="8" rx="2" fill="#f97316" fill-opacity="0.3"/>
+                  <path d="M122 52H138L133 68H127L122 52Z" fill="#f97316"/>
+                  <path d="M130 68C130 78 130 84 130 92" stroke="#06b6d4" stroke-width="3" stroke-linecap="round"/>
+                  <circle cx="130" cy="92" r="4" fill="#f97316"/>
+                  <line x1="15" y1="34" x2="108" y2="34" stroke="#475569" stroke-width="3"/>
+                  <line x1="152" y1="34" x2="245" y2="34" stroke="#475569" stroke-width="3"/>
+                  <defs>
+                    <linearGradient id="printGrad" x1="85" y1="92" x2="175" y2="126" gradientUnits="userSpaceOnUse">
+                      <stop stop-color="#06b6d4" stop-opacity="0.45"/>
+                      <stop offset="1" stop-color="#f97316" stop-opacity="0.35"/>
+                    </linearGradient>
+                  </defs>
+                </svg>
+              </div>
+
+              <div class="grid grid-cols-3 gap-2 text-center">
+                <div class="p-3 rounded-xl bg-slate-900 border border-slate-800">
+                  <div class="text-cyan-400 font-mono font-bold text-base">0.12mm</div>
+                  <div class="text-[11px] text-slate-400">Fine Layer Res</div>
+                </div>
+                <div class="p-3 rounded-xl bg-slate-900 border border-slate-800">
+                  <div class="text-orange-400 font-mono font-bold text-base">6+ Types</div>
+                  <div class="text-[11px] text-slate-400">Pro Filaments</div>
+                </div>
+                <div class="p-3 rounded-xl bg-slate-900 border border-slate-800">
+                  <div class="text-emerald-400 font-mono font-bold text-base">Nationwide</div>
+                  <div class="text-[11px] text-slate-400">PH Tracked Mail</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- SLIDE 2: CATALOG (5 ITEMS)                                          -->
+    <!-- =================================================================== -->
+    <section id="slide-1" class="slide-panel">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-6">
+        <div>
+          <span class="text-xs font-mono uppercase tracking-wider text-cyan-400">Ready-to-Print Collection</span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-1">Featured 3D Print Catalog</h2>
+          <p class="text-xs sm:text-sm text-slate-400 mt-1">Tap <strong class="text-white">"Order This Item"</strong> on any model to auto-fill its price &amp; filament specs into the Order Form.</p>
+        </div>
+        <button onclick="switchSlide(2)" class="self-start sm:self-auto px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-xs font-semibold text-cyan-400 flex items-center gap-2 transition">
+          <i class="fa-solid fa-calculator"></i>
+          <span>Custom Calculator</span>
+        </button>
+      </div>
+
+      <div id="catalog-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <!-- Rendered via JS -->
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- SLIDE 3: CALCULATOR (NO x2 MULTIPLIER)                              -->
+    <!-- =================================================================== -->
+    <section id="slide-2" class="slide-panel">
+      <div class="max-w-3xl mx-auto">
+        <div class="mb-6">
+          <span class="text-xs font-mono uppercase tracking-wider text-orange-400">Instant Print Estimator</span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-1">3D Print Price Calculator</h2>
+          <p class="text-xs sm:text-sm text-slate-400 mt-1">
+            Quote calculated strictly on <strong class="text-white">Filament Weight (₱5/gram)</strong> + <strong class="text-white">Estimated Print Time (₱50/hour)</strong>. No markup multiplier applied.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+          <div class="md:col-span-7 rounded-3xl bg-slate-900/90 border border-slate-800 p-6 flex flex-col justify-center space-y-6 shadow-xl">
+            <div>
+              <div class="flex justify-between items-center mb-2">
+                <label for="calc-grams" class="text-sm font-semibold text-white">Filament Weight (Grams)</label>
+                <span class="text-xs font-mono text-cyan-400">₱5.00 / gram</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <input type="number" id="calc-grams" min="1" max="5000" step="1" value="80"
+                  class="w-full px-4 py-3.5 rounded-xl bg-slate-950 border border-slate-700 text-white font-mono text-base focus:outline-none focus:border-cyan-400" />
+                <span class="text-sm font-mono text-slate-400">g</span>
+              </div>
+              <input type="range" id="calc-grams-range" min="5" max="500" step="5" value="80" class="w-full mt-2.5 cursor-pointer" />
+            </div>
+
+            <div>
+              <div class="flex justify-between items-center mb-2">
+                <label for="calc-hours" class="text-sm font-semibold text-white">Estimated Print Time (Hours)</label>
+                <span class="text-xs font-mono text-orange-400">₱50.00 / hour</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <input type="number" id="calc-hours" min="0.5" max="200" step="0.5" value="4"
+                  class="w-full px-4 py-3.5 rounded-xl bg-slate-950 border border-slate-700 text-white font-mono text-base focus:outline-none focus:border-cyan-400" />
+                <span class="text-sm font-mono text-slate-400">hrs</span>
+              </div>
+              <input type="range" id="calc-hours-range" min="0.5" max="48" step="0.5" value="4" class="w-full mt-2.5 cursor-pointer" />
+            </div>
+          </div>
+
+          <div class="md:col-span-5 rounded-3xl bg-gradient-to-b from-slate-900 to-slate-950 border border-cyan-500/30 p-6 flex flex-col justify-between shadow-xl">
+            <div>
+              <div class="text-xs font-mono uppercase tracking-wider text-cyan-400 mb-3">Live Cost Breakdown</div>
+              
+              <div class="space-y-3 text-sm border-b border-slate-800 pb-4">
+                <div class="flex justify-between">
+                  <span class="text-slate-400">Filament (<span id="lbl-grams">80</span>g × ₱5)</span>
+                  <span id="lbl-filament-cost" class="font-mono text-white font-semibold">₱400.00</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-slate-400">Print Time (<span id="lbl-hours">4</span>h × ₱50)</span>
+                  <span id="lbl-time-cost" class="font-mono text-white font-semibold">₱200.00</span>
+                </div>
+              </div>
+
+              <div class="mt-5">
+                <div class="text-xs text-slate-400">Estimated Total Quote</div>
+                <div id="calc-total-display" class="text-4xl font-extrabold font-mono text-cyan-400 mt-1">₱600.00</div>
+                <p class="text-[11px] text-slate-500 mt-1">*Excludes national shipping fee.</p>
+              </div>
+            </div>
+
+            <button onclick="applyCalculatorToCustomOrder()" class="mt-6 w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-cyan-500 to-cyan-400 hover:from-cyan-400 hover:to-cyan-300 text-slate-950 font-bold text-sm shadow-lg shadow-cyan-500/20 transition flex items-center justify-center gap-2">
+              <span>Use Quote in Custom Order</span>
+              <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- SLIDE 4: CUSTOM ORDER PAGE                                          -->
+    <!-- =================================================================== -->
+    <section id="slide-3" class="slide-panel">
+      <div class="max-w-3xl mx-auto">
+        <div class="mb-6">
+          <span class="text-xs font-mono uppercase tracking-wider text-cyan-400">Bespoke Fabrication</span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-1">Custom 3D Model Order</h2>
+          <p class="text-xs sm:text-sm text-slate-400 mt-1">
+            Upload your <code class="text-cyan-400">.STL</code>, <code class="text-cyan-400">.OBJ</code>, or <code class="text-cyan-400">.3MF</code> file, select your material &amp; color, and save directly to our database.
+          </p>
+        </div>
+
+        <form id="custom-order-form" class="rounded-3xl bg-slate-900/90 border border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
+          <div>
+            <label class="block text-sm font-semibold text-white mb-2">1. Upload 3D Model File (.STL / .OBJ / .3MF) *</label>
+            <label for="custom-file-input" class="flex flex-col items-center justify-center w-full p-6 border-2 border-dashed border-slate-700 hover:border-cyan-400 rounded-2xl bg-slate-950/70 cursor-pointer transition group">
+              <div class="w-12 h-12 rounded-2xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center mb-3 group-hover:scale-105 transition">
+                <i class="fa-solid fa-cloud-arrow-up text-xl"></i>
+              </div>
+              <span id="custom-file-label" class="text-sm font-semibold text-white text-center">Tap to select your 3D model file</span>
+              <span id="custom-file-meta" class="text-xs text-slate-400 mt-1">Supports .STL, .OBJ, .3MF, .STEP (Max 50MB)</span>
+              <input id="custom-file-input" type="file" accept=".stl,.obj,.3mf,.step,.stp" class="hidden" required />
+            </label>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="custom-filament-type" class="block text-sm font-semibold text-white mb-2">2. Filament Material *</label>
+              <select id="custom-filament-type" required class="w-full px-4 py-3.5 rounded-xl bg-slate-950 border border-slate-700 text-white text-sm focus:outline-none focus:border-cyan-400">
+                <option value="PLA+ Standard (High Detail)">PLA+ Standard (High Detail)</option>
+                <option value="Silk Dual-Color PLA (Glossy)">Silk Dual-Color PLA (Glossy)</option>
+                <option value="Tough PETG (Heat & Impact Resistant)">Tough PETG (Heat &amp; Impact Resistant)</option>
+                <option value="ABS Industrial (High Strength)">ABS Industrial (High Strength)</option>
+                <option value="TPU 95A Flexible (Rubbery)">TPU 95A Flexible (Rubbery)</option>
+                <option value="8K ABS-Like UV Resin (Ultra Smooth)">8K ABS-Like UV Resin (Ultra Smooth)</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="custom-filament-color" class="block text-sm font-semibold text-white mb-2">3. Filament Color *</label>
+              <select id="custom-filament-color" required class="w-full px-4 py-3.5 rounded-xl bg-slate-950 border border-slate-700 text-white text-sm focus:outline-none focus:border-cyan-400">
+                <option value="Matte Stealth Black">Matte Stealth Black</option>
+                <option value="Arctic Pure White">Arctic Pure White</option>
+                <option value="Electric Cyber Cyan">Electric Cyber Cyan</option>
+                <option value="Vibrant Safety Orange">Vibrant Safety Orange</option>
+                <option value="Silk Gold / Copper Dual">Silk Gold / Copper Dual</option>
+                <option value="Silk Purple / Blue Magic">Silk Purple / Blue Magic</option>
+                <option value="Translucent Smokey Grey">Translucent Smokey Grey</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <label for="custom-customer-name" class="block text-sm font-semibold text-white mb-2">Your Name *</label>
+              <input type="text" id="custom-customer-name" required placeholder="e.g. Marco Reyes"
+                class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-700 text-white text-sm focus:outline-none focus:border-cyan-400" />
+            </div>
+            <div>
+              <label for="custom-customer-contact" class="block text-sm font-semibold text-white mb-2">Mobile / Email *</label>
+              <input type="text" id="custom-customer-contact" required placeholder="09XX XXX XXXX"
+                class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-700 text-white text-sm focus:outline-none focus:border-cyan-400" />
+            </div>
+            <div>
+              <label for="custom-quote-price" class="block text-sm font-semibold text-white mb-2">Est. Quote (PHP)</label>
+              <input type="text" id="custom-quote-price" value="₱0.00 (Pending Slicing)"
+                class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-700 text-cyan-400 font-mono text-sm focus:outline-none focus:border-cyan-400" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="custom-region" class="block text-sm font-semibold text-white mb-2">National Region *</label>
+              <select id="custom-region" required class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-700 text-white text-sm focus:outline-none focus:border-cyan-400">
+                <option value="Mindanao / Davao City (₱85)">Mindanao / Davao City (₱85)</option>
+                <option value="Visayas (₱135)">Visayas (₱135)</option>
+                <option value="Metro Manila / NCR (₱165)">Metro Manila / NCR (₱165)</option>
+                <option value="Luzon Provincial (₱185)">Luzon Provincial (₱185)</option>
+              </select>
+            </div>
+            <div>
+              <label for="custom-address" class="block text-sm font-semibold text-white mb-2">Complete PH Delivery Address *</label>
+              <input type="text" id="custom-address" required placeholder="House/Unit, Barangay, City, Province"
+                class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-700 text-white text-sm focus:outline-none focus:border-cyan-400" />
+            </div>
+          </div>
+
+          <div>
+            <label for="custom-notes" class="block text-sm font-semibold text-white mb-2">Dimensions, Infill % &amp; Print Notes</label>
+            <textarea id="custom-notes" rows="3" placeholder="e.g. Scale to 150mm height, 25% gyroid infill..."
+              class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-700 text-white text-sm focus:outline-none focus:border-cyan-400"></textarea>
+          </div>
+
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2 border-t border-slate-800">
+            <div class="text-xs text-slate-400 flex items-center gap-2">
+              <i class="fa-solid fa-database text-emerald-400"></i>
+              <span>Saves file specs straight to Binay Bros Database</span>
+            </div>
+            <button type="submit" id="custom-submit-btn" class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-orange-500 hover:bg-orange-400 text-slate-950 font-bold text-sm shadow-lg shadow-orange-500/20 transition flex items-center justify-center gap-2">
+              <i class="fa-solid fa-paper-plane"></i>
+              <span>Save Custom Order</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- SLIDE 5: GCASH & CARD PAY                                           -->
+    <!-- =================================================================== -->
+    <section id="slide-4" class="slide-panel">
+      <div class="max-w-4xl mx-auto">
+        <div class="mb-6">
+          <span class="text-xs font-mono uppercase tracking-wider text-cyan-400">Fast &amp; Verified Payment</span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-1">GCash &amp; Card Payment Hub</h2>
+          <p class="text-xs sm:text-sm text-slate-400 mt-1">
+            Send payments to official account <strong class="text-white">GCash: 0976 081 8193</strong> or <strong class="text-white">Card: 5318 2600 8072 4384</strong>.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+          <!-- GCash Card -->
+          <div class="rounded-3xl bg-gradient-to-b from-blue-600 to-blue-800 p-6 text-white flex flex-col justify-between shadow-2xl border border-blue-400/30">
+            <div>
+              <div class="w-full flex items-center justify-between mb-4">
+                <span class="font-extrabold tracking-tight text-lg flex items-center gap-2">
+                  <i class="fa-solid fa-wallet"></i> GCash Express
+                </span>
+                <span class="text-[11px] font-mono bg-white/20 px-2.5 py-0.5 rounded-full">09760818193</span>
+              </div>
+
+              <div class="flex flex-col sm:flex-row items-center gap-4 bg-blue-950/40 p-4 rounded-2xl border border-white/15">
+                <div class="bg-white p-2.5 rounded-xl shadow-lg w-32 h-32 flex-shrink-0 flex items-center justify-center">
+                  <svg viewBox="0 0 120 120" class="w-full h-full">
+                    <rect width="120" height="120" fill="#ffffff"/>
+                    <rect x="8" y="8" width="28" height="28" rx="4" fill="none" stroke="#0f172a" stroke-width="5"/>
+                    <rect x="15" y="15" width="14" height="14" rx="2" fill="#0f172a"/>
+                    <rect x="84" y="8" width="28" height="28" rx="4" fill="none" stroke="#0f172a" stroke-width="5"/>
+                    <rect x="91" y="15" width="14" height="14" rx="2" fill="#0f172a"/>
+                    <rect x="8" y="84" width="28" height="28" rx="4" fill="none" stroke="#0f172a" stroke-width="5"/>
+                    <rect x="15" y="91" width="14" height="14" rx="2" fill="#0f172a"/>
+                    <rect x="44" y="10" width="6" height="6" fill="#0f172a"/>
+                    <rect x="56" y="10" width="12" height="6" fill="#0f172a"/>
+                    <rect x="44" y="22" width="12" height="6" fill="#0f172a"/>
+                    <rect x="68" y="22" width="8" height="12" fill="#0f172a"/>
+                    <rect x="10" y="44" width="12" height="6" fill="#0f172a"/>
+                    <rect x="28" y="44" width="6" height="14" fill="#0f172a"/>
+                    <rect x="10" y="64" width="14" height="6" fill="#0f172a"/>
+                    <rect x="84" y="44" width="12" height="6" fill="#0f172a"/>
+                    <rect x="102" y="44" width="10" height="14" fill="#0f172a"/>
+                    <rect x="84" y="64" width="18" height="6" fill="#0f172a"/>
+                    <rect x="44" y="84" width="6" height="14" fill="#0f172a"/>
+                    <rect x="56" y="90" width="14" height="6" fill="#0f172a"/>
+                    <rect x="76" y="84" width="6" height="24" fill="#0f172a"/>
+                    <rect x="90" y="84" width="20" height="6" fill="#0f172a"/>
+                    <rect x="90" y="98" width="12" height="12" fill="#0f172a"/>
+                    <rect x="44" y="104" width="24" height="6" fill="#0f172a"/>
+                    <rect x="43" y="43" width="34" height="34" rx="8" fill="#007dfe"/>
+                    <text x="60" y="65" text-anchor="middle" fill="#ffffff" font-family="Inter, sans-serif" font-weight="800" font-size="16">G</text>
+                  </svg>
+                </div>
+
+                <div class="text-center sm:text-left flex-1 space-y-1">
+                  <div class="text-xs text-blue-200">Official GCash Account</div>
+                  <div class="font-bold text-sm">BINAY BROS 3D PRINT LAB</div>
+                  <div class="text-xl font-mono font-extrabold tracking-wide text-white pt-1">0976 081 8193</div>
+                  <button onclick="copyGcashNumber()" class="mt-2 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white text-blue-700 hover:bg-blue-50 font-bold text-xs shadow transition">
+                    <i class="fa-regular fa-copy"></i>
+                    <span>Copy GCash Number</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-5 pt-4 border-t border-white/15 flex items-center justify-between gap-2">
+              <span class="text-xs text-blue-100">Send exact total + shipping</span>
+              <button onclick="selectPaymentAndGo('GCash (0976 081 8193)')" class="px-4 py-2.5 rounded-xl bg-slate-950/80 hover:bg-slate-950 text-white font-bold text-xs transition flex items-center gap-1.5">
+                <span>Pay with GCash</span>
+                <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Card Payment Card -->
+          <div class="rounded-3xl bg-gradient-to-br from-slate-900 via-slate-900 to-slate-950 p-6 text-white flex flex-col justify-between shadow-2xl border border-orange-500/40 relative overflow-hidden">
+            <div class="absolute -right-12 -top-12 w-40 h-40 bg-orange-500/10 rounded-full blur-2xl pointer-events-none"></div>
+            <div>
+              <div class="w-full flex items-center justify-between mb-4">
+                <span class="font-extrabold tracking-tight text-lg flex items-center gap-2 text-orange-400">
+                  <i class="fa-solid fa-credit-card"></i> Card Payment
+                </span>
+                <span class="text-[11px] font-mono bg-orange-500/15 text-orange-300 border border-orange-500/30 px-2.5 py-0.5 rounded-full">
+                  5318260080724384
+                </span>
+              </div>
+
+              <div class="rounded-2xl bg-gradient-to-tr from-slate-950 via-slate-800 to-slate-900 border border-slate-700 p-5 shadow-inner space-y-4">
+                <div class="flex items-center justify-between">
+                  <div class="w-10 h-7 rounded-md bg-gradient-to-br from-amber-300 to-amber-500 opacity-90"></div>
+                  <div class="flex items-center gap-1.5 text-xs font-mono text-slate-300">
+                    <i class="fa-brands fa-cc-mastercard text-2xl text-orange-400"></i>
+                    <span>DEBIT / CREDIT</span>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="text-[10px] font-mono uppercase tracking-widest text-slate-400">Destination Card Number</div>
+                  <div class="text-lg sm:text-xl font-mono font-extrabold tracking-widest text-cyan-400 mt-1">
+                    5318 2600 8072 4384
+                  </div>
+                </div>
+
+                <div class="flex items-center justify-between pt-1">
+                  <div>
+                    <div class="text-[10px] text-slate-400 uppercase">Cardholder / Merchant</div>
+                    <div class="text-xs font-bold text-white tracking-wide">BINAY BROS 3D PRINT LAB</div>
+                  </div>
+                  <button onclick="copyCardNumber()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-orange-500 hover:bg-orange-400 text-slate-950 font-bold text-xs shadow transition">
+                    <i class="fa-regular fa-copy"></i>
+                    <span>Copy Card No.</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-5 pt-4 border-t border-slate-800 flex items-center justify-between gap-2">
+              <span class="text-xs text-slate-400">All card deposits settle to 5318 •••• 4384</span>
+              <button onclick="selectPaymentAndGo('Card Payment (5318 2600 8072 4384)')" class="px-4 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs transition flex items-center gap-1.5">
+                <span>Pay with Card</span>
+                <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- SLIDE 6: ORDER FORM & LIVE DATABASE TRACKER                         -->
+    <!-- =================================================================== -->
+    <section id="slide-5" class="slide-panel">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- LEFT: CHECKOUT FORM -->
+        <div class="lg:col-span-7">
+          <div class="mb-5">
+            <span class="text-xs font-mono uppercase tracking-wider text-orange-400">Philippine National Checkout</span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-1">Complete Your Order</h2>
+            <p class="text-xs sm:text-sm text-slate-400 mt-1">
+              Catalog clicks auto-fill item details. Select national shipping region and payment reference.
+            </p>
+          </div>
+
+          <form id="main-order-form" class="rounded-3xl bg-slate-900/90 border border-slate-800 p-6 space-y-5 shadow-xl">
+            <div class="p-4 rounded-2xl bg-slate-950 border border-cyan-500/30 space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-mono uppercase tracking-wider text-cyan-400">Selected 3D Print Item</span>
+                <button type="button" onclick="switchSlide(1)" class="text-xs text-orange-400 hover:underline font-semibold">Change from Catalog</button>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div class="sm:col-span-2">
+                  <label for="order-product-name" class="block text-[11px] text-slate-400 mb-1">Product Name *</label>
+                  <input type="text" id="order-product-name" required value="Articulated Crystal Dragon"
+                    class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white font-semibold text-sm focus:outline-none focus:border-cyan-400" />
+                </div>
+                <div>
+                  <label for="order-item-price" class="block text-[11px] text-slate-400 mb-1">Item Cost (PHP) *</label>
+                  <input type="number" id="order-item-price" required value="450" min="1"
+                    class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-cyan-400 font-mono font-bold text-sm focus:outline-none focus:border-cyan-400" />
+                </div>
+              </div>
+
+              <div>
+                <label for="order-filament-details" class="block text-[11px] text-slate-400 mb-1">Filament Specification (Auto-Filled)</label>
+                <input type="text" id="order-filament-details" required value="PLA Silk Dual-Color (~90g, 0.16mm Layer Height)"
+                  class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-200 text-xs font-mono focus:outline-none focus:border-cyan-400" />
+              </div>
+            </div>
+
+            <!-- National Shipping Only (Philippines) -->
+            <div class="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-white flex items-center gap-2">
+                  <i class="fa-solid fa-truck-fast text-cyan-400"></i>
+                  <span>National Shipping Only (Philippines)</span>
+                </span>
+                <span id="shipping-fee-badge" class="text-[11px] font-mono px-2 py-0.5 rounded bg-cyan-500/15 text-cyan-400 border border-cyan-500/30">
+                  +₱85 Shipping
+                </span>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label for="order-region" class="block text-[11px] text-slate-400 mb-1">Philippine Island Group / Region *</label>
+                  <select id="order-region" required class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm focus:outline-none focus:border-cyan-400">
+                    <option value="85" data-label="Mindanao / Davao City">Mindanao / Davao City (+₱85)</option>
+                    <option value="135" data-label="Visayas">Visayas (+₱135)</option>
+                    <option value="165" data-label="Metro Manila / NCR">Metro Manila / NCR (+₱165)</option>
+                    <option value="185" data-label="Luzon Provincial">Luzon Provincial (+₱185)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label for="order-courier" class="block text-[11px] text-slate-400 mb-1">National Courier Partner *</label>
+                  <select id="order-courier" required class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm focus:outline-none focus:border-cyan-400">
+                    <option value="J&T Express PH">J&amp;T Express (Nationwide Tracked)</option>
+                    <option value="LBC Express PH">LBC Express (Branch / Door-to-Door)</option>
+                    <option value="Flash Express PH">Flash Express (Standard PH)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label for="order-customer-name" class="block text-xs font-semibold text-white mb-1.5">Full Recipient Name *</label>
+                <input type="text" id="order-customer-name" required placeholder="e.g. Juan Dela Cruz"
+                  class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-700 text-white text-sm focus:outline-none focus:border-cyan-400" />
+              </div>
+              <div>
+                <label for="order-customer-email" class="block text-xs font-semibold text-white mb-1.5">Mobile Number / Email *</label>
+                <input type="text" id="order-customer-email" required placeholder="09XX XXX XXXX"
+                  class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-700 text-white text-sm focus:outline-none focus:border-cyan-400" />
+              </div>
+            </div>
+
+            <div>
+              <label for="order-address" class="block text-xs font-semibold text-white mb-1.5">Complete Philippine Delivery Address *</label>
+              <input type="text" id="order-address" required placeholder="Blk 4 Lot 12, Brgy. Buhangin, Davao City"
+                class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-700 text-white text-sm focus:outline-none focus:border-cyan-400" />
+            </div>
+
+            <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <label for="order-payment-method" class="text-xs font-bold text-white">Payment Method *</label>
+                <button type="button" onclick="switchSlide(4)" class="text-[11px] text-cyan-400 hover:underline">View QR &amp; Card Hub</button>
+              </div>
+
+              <select id="order-payment-method" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm focus:outline-none focus:border-cyan-400">
+                <option value="GCash (0976 081 8193)">GCash — Send to 0976 081 8193</option>
+                <option value="Card Payment (5318 2600 8072 4384)">Card Payment — Route to 5318 2600 8072 4384</option>
+              </select>
+
+              <div id="payment-destination-banner" class="p-3 rounded-xl bg-blue-500/10 border border-blue-500/30 text-xs text-blue-200 flex items-center justify-between gap-2">
+                <span>Send GCash to: <strong class="font-mono text-white">0976 081 8193</strong></span>
+                <button type="button" onclick="copyGcashNumber()" class="px-2.5 py-1 rounded-lg bg-blue-500/20 hover:bg-blue-500/30 text-blue-200 font-mono text-[11px]">Copy</button>
+              </div>
+
+              <div id="card-checkout-fields" class="hidden grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
+                <div class="sm:col-span-3 text-[11px] text-orange-300 font-mono">
+                  <i class="fa-solid fa-lock mr-1"></i> Card deposit destination: <strong>5318 2600 8072 4384</strong>
+                </div>
+                <input type="text" id="payer-card-name" placeholder="Cardholder Name"
+                  class="px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:outline-none focus:border-orange-400" />
+                <input type="text" id="payer-card-last4" maxlength="4" placeholder="Last 4 Digits"
+                  class="px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white font-mono text-xs focus:outline-none focus:border-orange-400" />
+                <input type="text" id="payer-card-bank" placeholder="Bank (e.g. BDO)"
+                  class="px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:outline-none focus:border-orange-400" />
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 items-end pt-1">
+                <div>
+                  <label id="ref-input-label" for="order-gcash-ref" class="block text-xs font-semibold text-white mb-1">GCash Reference No. *</label>
+                  <input type="text" id="order-gcash-ref" required placeholder="e.g. 9012 4481 02931"
+                    class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-cyan-400 font-mono text-sm focus:outline-none focus:border-cyan-400" />
+                </div>
+
+                <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-between">
+                  <span class="text-xs text-slate-400">Grand Total:</span>
+                  <span id="order-grand-total" class="text-lg font-extrabold font-mono text-orange-400">₱535.00</span>
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" id="order-submit-btn" class="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-cyan-500 to-cyan-400 hover:from-cyan-400 hover:to-cyan-300 text-slate-950 font-extrabold text-sm shadow-lg shadow-cyan-500/25 transition flex items-center justify-center gap-2">
+              <i class="fa-solid fa-shield-check"></i>
+              <span>Submit Order &amp; Save to Database</span>
+            </button>
+          </form>
+        </div>
+
+        <!-- RIGHT: LIVE DATABASE FEED -->
+        <div class="lg:col-span-5">
+          <div class="rounded-3xl bg-slate-900/90 border border-slate-800 p-5 sm:p-6 shadow-xl h-full flex flex-col">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-4">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+                  <h3 class="font-bold text-white text-base">Live Database Orders</h3>
+                </div>
+                <p class="text-[11px] text-slate-400 mt-0.5">Real-time log of Catalog &amp; Custom STL orders</p>
+              </div>
+              <button type="button" onclick="seedSampleTestOrder()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-400 border border-slate-700 text-[11px] font-semibold transition" title="Simulate database entry">
+                + Test Entry
+              </button>
+            </div>
+
+            <div id="live-orders-feed" class="space-y-3 overflow-y-auto max-h-[540px] pr-1 flex-1">
+              <div class="text-center py-10 text-slate-500 text-xs">
+                <i class="fa-solid fa-spinner fa-spin text-lg text-cyan-400 mb-2"></i>
+                <p>Connecting to Database...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- SLIDE 7: PACKAGE TRACKER PAGE                                       -->
+    <!-- =================================================================== -->
+    <section id="slide-6" class="slide-panel">
+      <div class="max-w-3xl mx-auto">
+        <div class="mb-6">
+          <span class="text-xs font-mono uppercase tracking-wider text-cyan-400">Real-Time Courier Simulation</span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-1">Package Tracker</h2>
+          <p class="text-xs sm:text-sm text-slate-400 mt-1">
+            Enter your <strong class="text-white">Order ID</strong> (e.g. <code class="text-cyan-400">BB-104821</code>) or <strong class="text-white">Tracking Number</strong> to check real-time courier status (J&amp;T, Flash, or LBC).
+          </p>
+        </div>
+
+        <div class="rounded-3xl bg-slate-900/90 border border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
+          <div class="flex flex-col sm:flex-row gap-3">
+            <input type="text" id="tracker-input" placeholder="Enter Order ID or Tracking # (e.g. BB-104821)"
+              class="flex-1 px-4 py-3.5 rounded-xl bg-slate-950 border border-slate-700 text-white font-mono text-sm focus:outline-none focus:border-cyan-400" />
+            <button onclick="trackPackage()" class="px-6 py-3.5 rounded-2xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-sm transition shadow-lg shadow-cyan-500/20 flex items-center justify-center gap-2">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <span>Track Parcel</span>
+            </button>
+          </div>
+
+          <!-- Tracking Result Container -->
+          <div id="tracker-result-box" class="hidden rounded-2xl bg-slate-950 border border-slate-800 p-6 space-y-5">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-800">
+              <div>
+                <div class="text-[11px] font-mono text-cyan-400 uppercase tracking-wider" id="trk-id-label">Order #BB-104821</div>
+                <div class="text-lg font-bold text-white mt-0.5" id="trk-product-label">Articulated Crystal Dragon</div>
+              </div>
+              <div id="trk-status-badge" class="px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-xs font-mono font-semibold self-start sm:self-auto">
+                In Transit (Out for Delivery)
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+              <div class="p-3 rounded-xl bg-slate-900 border border-slate-800">
+                <div class="text-slate-400">Courier Partner</div>
+                <div id="trk-courier" class="font-bold text-white mt-1">J&amp;T Express PH</div>
+              </div>
+              <div class="p-3 rounded-xl bg-slate-900 border border-slate-800">
+                <div class="text-slate-400">Recipient</div>
+                <div id="trk-recipient" class="font-bold text-white mt-1">Marco Santos</div>
+              </div>
+              <div class="p-3 rounded-xl bg-slate-900 border border-slate-800">
+                <div class="text-slate-400">Destination</div>
+                <div id="trk-dest" class="font-bold text-cyan-300 mt-1 truncate">Mindanao / Davao City</div>
+              </div>
+            </div>
+
+            <!-- Timeline Simulation -->
+            <div class="space-y-4 pt-2">
+              <div class="text-xs font-mono text-slate-400 uppercase">Courier Milestone History</div>
+              <div id="trk-timeline" class="space-y-3 border-l-2 border-cyan-500/30 pl-4 ml-2">
+                <!-- Populated via JS -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MOBILE BOTTOM QUICK-SLIDE CONTROLS -->
+  <footer class="fixed bottom-0 inset-x-0 z-30 bg-slate-950/95 backdrop-blur-md border-t border-slate-800/90 py-2 px-4 sm:hidden">
+    <div class="flex items-center justify-between max-w-md mx-auto">
+      <button onclick="prevSlide()" class="px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 text-xs font-semibold flex items-center gap-1.5 active:scale-95 transition">
+        <i class="fa-solid fa-chevron-left"></i>
+        <span>Prev</span>
+      </button>
+      <span id="mobile-slide-indicator" class="text-xs font-mono text-cyan-400 font-bold">Slide 1 / 7</span>
+      <button onclick="nextSlide()" class="px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 text-xs font-semibold flex items-center gap-1.5 active:scale-95 transition">
+        <span>Next</span>
+        <i class="fa-solid fa-chevron-right"></i>
+      </button>
+    </div>
+  </footer>
+
+  <!-- FIREBASE & APPLICATION LOGIC -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // CATALOG DATA (5 ITEMS)
+    const CATALOG_ITEMS = [
+      {
+        id: 'dragon-01',
+        name: 'Articulated Crystal Dragon',
+        price: 450,
+        weight: '90g',
+        filament: 'PLA Silk Dual-Color (~90g, 0.16mm Layer Height)',
+        badge: 'Best Seller',
+        description: 'Fully flexible print-in-place segmented crystal dragon with iridescent dual-tone scales.',
+        svg: `
+          <svg viewBox="0 0 240 150" class="w-full h-36">
+            <defs>
+              <linearGradient id="dragonGrad" x1="0" y1="0" x2="240" y2="150" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#06b6d4"/>
+                <stop offset="50%" stop-color="#8b5cf6"/>
+                <stop offset="100%" stop-color="#f97316"/>
+              </linearGradient>
+            </defs>
+            <path d="M25 110 C55 45, 95 130, 130 65 C155 20, 185 95, 212 42" fill="none" stroke="url(#dragonGrad)" stroke-width="14" stroke-linecap="round"/>
+            <path d="M25 110 C55 45, 95 130, 130 65 C155 20, 185 95, 212 42" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="3" stroke-dasharray="6 8"/>
+            <polygon points="62,68 70,50 78,68" fill="#06b6d4"/>
+            <polygon points="122,60 130,40 138,60" fill="#a855f7"/>
+            <polygon points="175,58 184,38 192,58" fill="#f97316"/>
+            <polygon points="205,36 228,32 220,48 205,46" fill="#f97316"/>
+            <circle cx="216" cy="38" r="2" fill="#090d16"/>
+          </svg>
+        `
+      },
+      {
+        id: 'balisong-02',
+        name: '3D Printed Balisong Trainer Knife',
+        price: 280,
+        weight: '55g',
+        filament: 'Tough PETG / PLA+ (~55g, 60% Infill Reinforced)',
+        badge: 'Flip Ready',
+        description: 'Smooth bushing-pivoted butterfly trainer with dulled practice blade and balanced channel handles.',
+        svg: `
+          <svg viewBox="0 0 240 150" class="w-full h-36">
+            <rect x="42" y="55" width="78" height="14" rx="5" transform="rotate(-18 42 55)" fill="#1e293b" stroke="#06b6d4" stroke-width="2.5"/>
+            <rect x="45" y="82" width="78" height="14" rx="5" transform="rotate(18 45 82)" fill="#1e293b" stroke="#f97316" stroke-width="2.5"/>
+            <path d="M116 68 L205 68 L216 75 L205 82 L116 82 Z" fill="#cbd5e1" stroke="#06b6d4" stroke-width="2"/>
+            <circle cx="145" cy="75" r="3" fill="#0f172a"/>
+            <circle cx="163" cy="75" r="3" fill="#0f172a"/>
+            <circle cx="181" cy="75" r="3" fill="#0f172a"/>
+            <circle cx="116" cy="65" r="4.5" fill="#f97316"/>
+            <circle cx="116" cy="85" r="4.5" fill="#06b6d4"/>
+          </svg>
+        `
+      },
+      {
+        id: 'planter-03',
+        name: 'Geometric Voronoi Desk Planter',
+        price: 320,
+        weight: '65g',
+        filament: 'Matte Sage / Marble PLA (~65g, 0.20mm Layer)',
+        badge: 'Home & Desk',
+        description: 'Architectural faceted succulent pot with integrated drainage lattice and matching drip saucer.',
+        svg: `
+          <svg viewBox="0 0 240 150" class="w-full h-36">
+            <ellipse cx="120" cy="48" rx="10" ry="22" fill="#10b981"/>
+            <ellipse cx="104" cy="54" rx="9" ry="19" transform="rotate(-28 104 54)" fill="#34d399"/>
+            <ellipse cx="136" cy="54" rx="9" ry="19" transform="rotate(28 136 54)" fill="#059669"/>
+            <polygon points="78,66 162,66 148,122 92,122" fill="#1e293b" stroke="#06b6d4" stroke-width="2.5"/>
+            <polyline points="78,66 120,94 162,66" fill="none" stroke="#06b6d4" stroke-width="1.5"/>
+            <polyline points="92,122 120,94 148,122" fill="none" stroke="#06b6d4" stroke-width="1.5"/>
+            <line x1="120" y1="66" x2="120" y2="122" stroke="#06b6d4" stroke-width="1.5"/>
+            <rect x="86" y="125" width="68" height="7" rx="3.5" fill="#f97316"/>
+          </svg>
+        `
+      },
+      {
+        id: 'keycap-04',
+        name: 'Custom Mechanical Keycap Set (4pc)',
+        price: 390,
+        weight: '40g',
+        filament: '8K ABS-Like UV Resin (~40g, 0.05mm Ultra Fine)',
+        badge: '8K Resin',
+        description: 'Cherry MX stem artisan ESC & arrow cluster featuring crisp sci-fi cyber reliefs and translucent accents.',
+        svg: `
+          <svg viewBox="0 0 240 150" class="w-full h-36">
+            <rect x="96" y="24" width="48" height="44" rx="9" fill="#0f172a" stroke="#f97316" stroke-width="2.5"/>
+            <rect x="104" y="30" width="32" height="28" rx="5" fill="#f97316" fill-opacity="0.2" stroke="#f97316" stroke-width="1.5"/>
+            <text x="120" y="48" text-anchor="middle" fill="#f97316" font-family="monospace" font-weight="bold" font-size="11">ESC</text>
+            <rect x="44" y="78" width="46" height="44" rx="9" fill="#0f172a" stroke="#06b6d4" stroke-width="2.5"/>
+            <path d="M71 100H61M61 100L65 96M61 100L65 104" stroke="#06b6d4" stroke-width="2" stroke-linecap="round"/>
+            <rect x="97" y="78" width="46" height="44" rx="9" fill="#0f172a" stroke="#06b6d4" stroke-width="2.5"/>
+            <path d="M120 95V105M120 105L116 101M120 105L124 101" stroke="#06b6d4" stroke-width="2" stroke-linecap="round"/>
+            <rect x="150" y="78" width="46" height="44" rx="9" fill="#0f172a" stroke="#06b6d4" stroke-width="2.5"/>
+            <path d="M168 100H178M178 100L174 96M178 100L174 104" stroke="#06b6d4" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        `
+      },
+      {
+        id: 'octopus-05',
+        name: 'Articulated Cyberpunk Fidget Octopus',
+        price: 220,
+        weight: '45g',
+        filament: 'Flexible TPU / Glossy PLA (~45g, 0.16mm Layer)',
+        badge: 'Desk Fidget',
+        description: '8-tentacle print-in-place chain-link desk companion with cyber visor detailing and smooth wiggle joints.',
+        svg: `
+          <svg viewBox="0 0 240 150" class="w-full h-36">
+            <path d="M84 74 C84 36, 156 36, 156 74 Z" fill="#06b6d4" fill-opacity="0.25" stroke="#06b6d4" stroke-width="3"/>
+            <rect x="96" y="54" width="48" height="11" rx="5.5" fill="#f97316"/>
+            <path d="M88 76 C70 92, 62 110, 48 116" fill="none" stroke="#06b6d4" stroke-width="7" stroke-linecap="round" stroke-dasharray="10 5"/>
+            <path d="M105 78 C98 98, 92 115, 84 126" fill="none" stroke="#06b6d4" stroke-width="7" stroke-linecap="round" stroke-dasharray="10 5"/>
+            <path d="M135 78 C142 98, 148 115, 156 126" fill="none" stroke="#06b6d4" stroke-width="7" stroke-linecap="round" stroke-dasharray="10 5"/>
+            <path d="M152 76 C170 92, 178 110, 192 116" fill="none" stroke="#06b6d4" stroke-width="7" stroke-linecap="round" stroke-dasharray="10 5"/>
+          </svg>
+        `
+      }
+    ];
+
+    let currentSlideIndex = 0;
+    const totalSlides = 7;
+
+    window.switchSlide = function(index) {
+      if (index < 0 || index >= totalSlides) return;
+      currentSlideIndex = index;
+
+      document.querySelectorAll('.slide-panel').forEach((panel, idx) => {
+        panel.classList.toggle('active', idx === index);
+      });
+
+      document.querySelectorAll('.slide-tab').forEach((tab, idx) => {
+        if (idx === index) {
+          tab.className = 'slide-tab active flex-shrink-0 flex items-center gap-2 px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-cyan-500 text-slate-950 shadow-md shadow-cyan-500/20';
+          tab.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        } else {
+          tab.className = 'slide-tab flex-shrink-0 flex items-center gap-2 px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-slate-900/90 text-slate-300 hover:text-white border border-slate-800';
+        }
+      });
+
+      const indicator = document.getElementById('mobile-slide-indicator');
+      if (indicator) indicator.textContent = `Slide ${index + 1} / ${totalSlides}`;
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    window.nextSlide = function() {
+      switchSlide((currentSlideIndex + 1) % totalSlides);
+    };
+
+    window.prevSlide = function() {
+      switchSlide((currentSlideIndex - 1 + totalSlides) % totalSlides);
+    };
+
+    let touchStartX = 0;
+    let touchEndX = 0;
+    const viewport = document.getElementById('slides-viewport');
+    viewport.addEventListener('touchstart', e => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+    viewport.addEventListener('touchend', e => {
+      touchEndX = e.changedTouches[0].screenX;
+      const diff = touchStartX - touchEndX;
+      if (Math.abs(diff) > 75) {
+        if (diff > 0 && currentSlideIndex < totalSlides - 1) nextSlide();
+        if (diff < 0 && currentSlideIndex > 0) prevSlide();
+      }
+    }, { passive: true });
+
+    window.showToast = function(title, message, type = 'success') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      const borderColor = type === 'success' ? 'border-emerald-500/50' : type === 'info' ? 'border-cyan-500/50' : 'border-orange-500/50';
+      const iconClass = type === 'success' ? 'fa-circle-check text-emerald-400' : type === 'info' ? 'fa-circle-info text-cyan-400' : 'fa-triangle-exclamation text-orange-400';
+
+      toast.className = `pointer-events-auto rounded-2xl bg-slate-900/95 backdrop-blur-md border ${borderColor} p-4 shadow-2xl flex items-start gap-3 transition-all duration-300`;
+      toast.innerHTML = `
+        <i class="fa-solid ${iconClass} mt-0.5 text-base"></i>
+        <div class="flex-1">
+          <div class="font-bold text-xs text-white">${title}</div>
+          <div class="text-[11px] text-slate-300 mt-0.5 leading-relaxed">${message}</div>
+        </div>
+      `;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(8px)';
+        setTimeout(() => toast.remove(), 300);
+      }, 4200);
+    };
+
+    function renderCatalog() {
+      const grid = document.getElementById('catalog-grid');
+      grid.innerHTML = CATALOG_ITEMS.map(item => `
+        <article class="rounded-3xl bg-slate-900/90 border border-slate-800 hover:border-cyan-500/50 transition-all flex flex-col justify-between overflow-hidden shadow-xl group">
+          <div>
+            <div class="relative bg-slate-950/90 border-b border-slate-800/80 p-4 flex items-center justify-center">
+              <span class="absolute top-3 left-3 text-[10px] font-mono uppercase px-2.5 py-1 rounded-full bg-cyan-500/15 text-cyan-400 border border-cyan-500/30">
+                ${item.badge}
+              </span>
+              <span class="absolute top-3 right-3 text-[11px] font-mono text-slate-400">
+                ~${item.weight}
+              </span>
+              <div class="group-hover:scale-105 transition-transform duration-300 w-full">
+                ${item.svg}
+              </div>
+            </div>
+
+            <div class="p-5">
+              <div class="flex items-start justify-between gap-2">
+                <h3 class="font-bold text-base text-white leading-snug">${item.name}</h3>
+                <span class="font-mono font-extrabold text-lg text-orange-400">₱${item.price}</span>
+              </div>
+              <p class="text-xs text-slate-400 mt-2 leading-relaxed">${item.description}</p>
+              <div class="mt-3 px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-[11px] font-mono text-cyan-300">
+                <i class="fa-solid fa-layer-group mr-1 text-cyan-400"></i> ${item.filament}
+              </div>
+            </div>
+          </div>
+
+          <div class="px-5 pb-5">
+            <button onclick="selectCatalogItem('${item.id}')" class="w-full py-3 px-4 rounded-2xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs sm:text-sm transition flex items-center justify-center gap-2 shadow-md shadow-cyan-500/20">
+              <i class="fa-solid fa-cart-plus"></i>
+              <span>Order This Item</span>
+            </button>
+          </div>
+        </article>
+      `).join('');
+    }
+
+    window.selectCatalogItem = function(itemId) {
+      const item = CATALOG_ITEMS.find(x => x.id === itemId);
+      if (!item) return;
+
+      document.getElementById('order-product-name').value = item.name;
+      document.getElementById('order-item-price').value = item.price;
+      document.getElementById('order-filament-details').value = item.filament;
+      updateOrderGrandTotal();
+
+      switchSlide(5);
+      showToast('Item Loaded into Order Form', `${item.name} (₱${item.price}) auto-filled.`, 'info');
+    };
+
+    // CALCULATOR (NO x2 MULTIPLIER)
+    const gramsInput = document.getElementById('calc-grams');
+    const gramsRange = document.getElementById('calc-grams-range');
+    const hoursInput = document.getElementById('calc-hours');
+    const hoursRange = document.getElementById('calc-hours-range');
+
+    let latestCalculatedQuote = 600;
+
+    function calculatePrintPrice() {
+      const grams = Math.max(0, parseFloat(gramsInput.value) || 0);
+      const hours = Math.max(0, parseFloat(hoursInput.value) || 0);
+
+      const filamentCost = grams * 5;
+      const timeCost = hours * 50;
+      const finalQuote = filamentCost + timeCost; // NO x2 multiplier
+      latestCalculatedQuote = finalQuote;
+
+      document.getElementById('lbl-grams').textContent = grams;
+      document.getElementById('lbl-hours').textContent = hours;
+      document.getElementById('lbl-filament-cost').textContent = `₱${filamentCost.toFixed(2)}`;
+      document.getElementById('lbl-time-cost').textContent = `₱${timeCost.toFixed(2)}`;
+      document.getElementById('calc-total-display').textContent = `₱${finalQuote.toFixed(2)}`;
+    }
+
+    gramsInput.addEventListener('input', () => { gramsRange.value = gramsInput.value; calculatePrintPrice(); });
+    gramsRange.addEventListener('input', () => { gramsInput.value = gramsRange.value; calculatePrintPrice(); });
+    hoursInput.addEventListener('input', () => { hoursRange.value = hoursInput.value; calculatePrintPrice(); });
+    hoursRange.addEventListener('input', () => { hoursInput.value = hoursRange.value; calculatePrintPrice(); });
+
+    window.applyCalculatorToCustomOrder = function() {
+      const grams = gramsInput.value || 0;
+      const hours = hoursInput.value || 0;
+      document.getElementById('custom-quote-price').value = `₱${latestCalculatedQuote.toFixed(2)}`;
+      document.getElementById('custom-notes').value = `Estimated from Calculator: ${grams}g filament, ${hours} hrs print duration.`;
+      switchSlide(3);
+      showToast('Quote Applied', `₱${latestCalculatedQuote.toFixed(2)} transferred to Custom Order page.`, 'info');
+    };
+
+    function copyTextToClipboard(rawText, label, detail) {
+      const tempInput = document.createElement('input');
+      tempInput.value = rawText;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand('copy');
+      document.body.removeChild(tempInput);
+      showToast(label, detail, 'success');
+    }
+
+    window.copyGcashNumber = function() {
+      copyTextToClipboard('09760818193', 'GCash Number Copied', '0976 081 8193 copied to clipboard.');
+    };
+
+    window.copyCardNumber = function() {
+      copyTextToClipboard('5318260080724384', 'Card Number Copied', '5318 2600 8072 4384 copied to clipboard.');
+    };
+
+    window.selectPaymentAndGo = function(methodValue) {
+      const select = document.getElementById('order-payment-method');
+      select.value = methodValue;
+      updatePaymentMethodUI();
+      switchSlide(5);
+      showToast('Payment Method Selected', `${methodValue} selected for checkout.`, 'info');
+    };
+
+    function updatePaymentMethodUI() {
+      const method = document.getElementById('order-payment-method').value;
+      const banner = document.getElementById('payment-destination-banner');
+      const cardFields = document.getElementById('card-checkout-fields');
+      const refLabel = document.getElementById('ref-input-label');
+      const refInput = document.getElementById('order-gcash-ref');
+
+      if (method.startsWith('Card Payment')) {
+        banner.className = 'p-3 rounded-xl bg-orange-500/10 border border-orange-500/30 text-xs text-orange-200 flex items-center justify-between gap-2';
+        banner.innerHTML = `<span>Card deposit destination: <strong class="font-mono text-white">5318 2600 8072 4384</strong></span>
+          <button type="button" onclick="copyCardNumber()" class="px-2.5 py-1 rounded-lg bg-orange-500/20 hover:bg-orange-500/30 text-orange-200 font-mono text-[11px]">Copy</button>`;
+        cardFields.classList.remove('hidden');
+        cardFields.classList.add('grid');
+        refLabel.textContent = 'Card Transfer Reference No. *';
+        refInput.placeholder = 'e.g. TXN-88421093';
+      } else {
+        banner.className = 'p-3 rounded-xl bg-blue-500/10 border border-blue-500/30 text-xs text-blue-200 flex items-center justify-between gap-2';
+        banner.innerHTML = `<span>Send GCash to: <strong class="font-mono text-white">0976 081 8193</strong></span>
+          <button type="button" onclick="copyGcashNumber()" class="px-2.5 py-1 rounded-lg bg-blue-500/20 hover:bg-blue-500/30 text-blue-200 font-mono text-[11px]">Copy</button>`;
+        cardFields.classList.add('hidden');
+        cardFields.classList.remove('grid');
+        refLabel.textContent = 'GCash Reference No. *';
+        refInput.placeholder = 'e.g. 9012 4481 02931';
+      }
+    }
+
+    document.getElementById('order-payment-method').addEventListener('change', updatePaymentMethodUI);
+
+    function getSelectedNationalShippingFee() {
+      const regionSelect = document.getElementById('order-region');
+      return parseFloat(regionSelect.value) || 85;
+    }
+
+    function updateOrderGrandTotal() {
+      const itemPrice = Math.max(0, parseFloat(document.getElementById('order-item-price').value) || 0);
+      const shippingFee = getSelectedNationalShippingFee();
+      document.getElementById('shipping-fee-badge').textContent = `+₱${shippingFee} Shipping`;
+      const total = itemPrice + shippingFee;
+      document.getElementById('order-grand-total').textContent = `₱${total.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    }
+
+    document.getElementById('order-item-price').addEventListener('input', updateOrderGrandTotal);
+    document.getElementById('order-region').addEventListener('change', updateOrderGrandTotal);
+
+    const customFileInput = document.getElementById('custom-file-input');
+    customFileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const sizeKB = (file.size / 1024).toFixed(1);
+        document.getElementById('custom-file-label').textContent = file.name;
+        document.getElementById('custom-file-meta').textContent = `Ready to save • ${sizeKB} KB`;
+      }
+    });
+
+    // DATABASE STATE & PACKAGE TRACKER
+    let db = null;
+    let auth = null;
+    let currentUser = null;
+    let useCloudFirestore = false;
+    let inMemoryOrders = [];
+
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'binay-bros-3d-lab';
+
+    async function initDatabase() {
+      try {
+        if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+          const firebaseConfig = JSON.parse(__firebase_config);
+          const app = initializeApp(firebaseConfig);
+          auth = getAuth(app);
+          db = getFirestore(app);
+
+          if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+            await signInWithCustomToken(auth, __initial_auth_token);
+          } else {
+            await signInAnonymously(auth);
+          }
+
+          onAuthStateChanged(auth, (user) => {
+            if (user) {
+              currentUser = user;
+              useCloudFirestore = true;
+              document.getElementById('db-status-text').textContent = 'Cloud DB Live';
+              subscribeToOrders();
+            }
+          });
+        } else {
+          enableSandboxDatabaseMode();
+        }
+      } catch (err) {
+        enableSandboxDatabaseMode();
+      }
+    }
+
+    function enableSandboxDatabaseMode() {
+      useCloudFirestore = false;
+      document.getElementById('db-status-text').textContent = 'Live Test DB';
+      inMemoryOrders = [
+        {
+          orderCode: 'BB-104821',
+          orderType: 'Catalog Order',
+          productName: 'Articulated Crystal Dragon',
+          filament: 'PLA Silk Dual-Color (~90g)',
+          totalPrice: '₱535.00',
+          shipping: 'National PH (J&T Express PH) — Mindanao / Davao City',
+          paymentMethod: 'GCash (0976 081 8193)',
+          customerName: 'Marco Santos',
+          contact: '0917 555 0192',
+          gcashRef: '9012 8841 22019',
+          courier: 'J&T Express PH',
+          createdAtMs: Date.now() - 3600000
+        }
+      ];
+      renderOrdersFeed(inMemoryOrders);
+    }
+
+    function subscribeToOrders() {
+      if (!db || !currentUser) return;
+      const ordersCol = collection(db, 'artifacts', appId, 'public', 'data', 'orders');
+      onSnapshot(
+        ordersCol,
+        (snapshot) => {
+          const list = [];
+          snapshot.forEach(docSnap => {
+            list.push({ id: docSnap.id, ...docSnap.data() });
+          });
+          list.sort((a, b) => (b.createdAtMs || 0) - (a.createdAtMs || 0));
+          renderOrdersFeed(list);
+        },
+        (error) => {
+          enableSandboxDatabaseMode();
+        }
+      );
+    }
+
+    async function saveOrderRecord(record) {
+      if (useCloudFirestore && db && currentUser) {
+        const ordersCol = collection(db, 'artifacts', appId, 'public', 'data', 'orders');
+        await addDoc(ordersCol, {
+          ...record,
+          createdAt: serverTimestamp()
+        });
+      } else {
+        inMemoryOrders.unshift(record);
+        renderOrdersFeed(inMemoryOrders);
+      }
+    }
+
+    function getAllOrdersList() {
+      if (useCloudFirestore) {
+        // Gather from current DOM feed or memory
+        return inMemoryOrders;
+      }
+      return inMemoryOrders;
+    }
+
+    function renderOrdersFeed(orders) {
+      inMemoryOrders = orders; // Keep local sync copy for tracker
+      const feed = document.getElementById('live-orders-feed');
+      const badgeCount = document.getElementById('nav-order-count');
+      badgeCount.textContent = orders.length;
+
+      if (!orders.length) {
+        feed.innerHTML = `<div class="text-center py-8 text-slate-500 text-xs">No orders recorded yet. Submit a test order!</div>`;
+        return;
+      }
+
+      feed.innerHTML = orders.map(order => {
+        const isCustom = order.orderType === 'Custom STL Order';
+        const tagClass = isCustom
+          ? 'bg-orange-500/15 text-orange-400 border-orange-500/30'
+          : 'bg-cyan-500/15 text-cyan-400 border-cyan-500/30';
+
+        return `
+          <div class="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 space-y-2">
+            <div class="flex items-center justify-between gap-2">
+              <span class="font-mono font-bold text-xs text-white">#${order.orderCode}</span>
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded-full border ${tagClass}">
+                ${order.orderType}
+              </span>
+            </div>
+
+            <div class="text-sm font-bold text-slate-100">${order.productName}</div>
+            <div class="text-[11px] font-mono text-cyan-300">${order.filament}</div>
+
+            <div class="text-[11px] text-slate-400 space-y-0.5 pt-1 border-t border-slate-800/80">
+              <div><strong class="text-slate-300">Client:</strong> ${order.customerName} (${order.contact})</div>
+              <div><strong class="text-slate-300">Ship:</strong> ${order.shipping}</div>
+              <div class="flex items-center justify-between pt-1">
+                <span><strong class="text-slate-300">Ref #:</strong> <span class="font-mono text-slate-200">${order.gcashRef || 'Pending'}</span></span>
+                <span class="font-mono font-bold text-emerald-400">${order.totalPrice}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // PACKAGE TRACKER SIMULATION LOGIC
+    window.trackPackage = function() {
+      const query = document.getElementById('tracker-input').value.trim().toUpperCase();
+      const resultBox = document.getElementById('tracker-result-box');
+      if (!query) {
+        showToast('Enter ID', 'Please enter an Order ID or Tracking Number.', 'warning');
+        return;
+      }
+
+      const orders = getAllOrdersList();
+      const found = orders.find(o => (o.orderCode || '').toUpperCase() === query || (o.gcashRef || '').toUpperCase().includes(query));
+
+      resultBox.classList.remove('hidden');
+
+      if (found) {
+        document.getElementById('trk-id-label').textContent = `Order #${found.orderCode}`;
+        document.getElementById('trk-product-label').textContent = found.productName;
+        document.getElementById('trk-courier').textContent = found.courier || 'J&T Express PH (Tracked)';
+        document.getElementById('trk-recipient').textContent = found.customerName;
+        document.getElementById('trk-dest').textContent = found.shipping.includes('—') ? found.shipping.split('—')[1] : found.shipping;
+
+        document.getElementById('trk-timeline').innerHTML = `
+          <div class="flex items-start gap-3">
+            <div class="w-3 h-3 rounded-full bg-cyan-400 mt-1 flex-shrink-0"></div>
+            <div>
+              <div class="text-xs font-bold text-white">Parcel Picked Up by Courier Rider</div>
+              <div class="text-[11px] text-slate-400">Binay Bros Davao City Hub • Scanned successfully</div>
+            </div>
+          </div>
+          <div class="flex items-start gap-3">
+            <div class="w-3 h-3 rounded-full bg-cyan-400 mt-1 flex-shrink-0"></div>
+            <div>
+              <div class="text-xs font-bold text-white">In Transit (National Sorting Center)</div>
+              <div class="text-[11px] text-slate-400">Parasel is cleared for regional transport</div>
+            </div>
+          </div>
+          <div class="flex items-start gap-3">
+            <div class="w-3 h-3 rounded-full bg-emerald-400 animate-pulse mt-1 flex-shrink-0"></div>
+            <div>
+              <div class="text-xs font-bold text-emerald-400">Out for Delivery to Recipient</div>
+              <div class="text-[11px] text-slate-400">Assigned local delivery courier is on the way</div>
+            </div>
+          </div>
+        `;
+        showToast('Tracking Found', `Loaded live milestones for #${found.orderCode}`, 'success');
+      } else {
+        // Fallback dummy simulation for any random code entered
+        document.getElementById('trk-id-label').textContent = `Query: ${query}`;
+        document.getElementById('trk-product-label').textContent = 'Custom 3D Print Parcel';
+        document.getElementById('trk-courier').textContent = 'Flash Express PH';
+        document.getElementById('trk-recipient').textContent = 'Valued Client';
+        document.getElementById('trk-dest').textContent = 'Philippines Nationwide';
+
+        document.getElementById('trk-timeline').innerHTML = `
+          <div class="flex items-start gap-3">
+            <div class="w-3 h-3 rounded-full bg-cyan-400 mt-1 flex-shrink-0"></div>
+            <div>
+              <div class="text-xs font-bold text-white">Order Verified &amp; Sliced in Davao Lab</div>
+              <div class="text-[11px] text-slate-400">Printing completed with high-tolerance polymer</div>
+            </div>
+          </div>
+          <div class="flex items-start gap-3">
+            <div class="w-3 h-3 rounded-full bg-cyan-400 mt-1 flex-shrink-0"></div>
+            <div>
+              <div class="text-xs font-bold text-white">Handed to Courier Partner</div>
+              <div class="text-[11px] text-slate-400">Secured in bubble wrap box</div>
+            </div>
+          </div>
+        `;
+        showToast('Tracking Simulated', `Showing transit status for ${query}`, 'info');
+      }
+    };
+
+    document.getElementById('main-order-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('order-submit-btn');
+      btn.disabled = true;
+
+      const itemPrice = parseFloat(document.getElementById('order-item-price').value) || 0;
+      const shippingFee = getSelectedNationalShippingFee();
+      const grandTotal = itemPrice + shippingFee;
+
+      const regionSelect = document.getElementById('order-region');
+      const regionLabel = regionSelect.options[regionSelect.selectedIndex].getAttribute('data-label');
+      const courier = document.getElementById('order-courier').value;
+      const address = document.getElementById('order-address').value.trim();
+
+      const payMethod = document.getElementById('order-payment-method').value;
+      const cardHolder = document.getElementById('payer-card-name').value.trim();
+      const cardLast4 = document.getElementById('payer-card-last4').value.trim();
+      const cardBank = document.getElementById('payer-card-bank').value.trim();
+      const cardExtra = payMethod.startsWith('Card Payment') && (cardHolder || cardLast4)
+        ? ` [${cardHolder || 'Cardholder'} ••••${cardLast4 || 'XXXX'} ${cardBank}]`
+        : '';
+
+      const newOrder = {
+        orderCode: 'BB-' + Math.floor(100000 + Math.random() * 900000),
+        orderType: 'Catalog Order',
+        productName: document.getElementById('order-product-name').value.trim(),
+        filament: document.getElementById('order-filament-details').value.trim(),
+        totalPrice: `₱${grandTotal.toLocaleString('en-PH', { minimumFractionDigits: 2 })}`,
+        shipping: `National PH (${courier}) — ${regionLabel}: ${address}`,
+        paymentMethod: payMethod + cardExtra,
+        customerName: document.getElementById('order-customer-name').value.trim(),
+        contact: document.getElementById('order-customer-email').value.trim(),
+        gcashRef: document.getElementById('order-gcash-ref').value.trim(),
+        courier: courier,
+        createdAtMs: Date.now()
+      };
+
+      try {
+        await saveOrderRecord(newOrder);
+        showToast('Order Saved!', `Order #${newOrder.orderCode} confirmed. You can now track it on Slide 7!`, 'success');
+        document.getElementById('order-gcash-ref').value = '';
+      } catch (err) {
+        showToast('Save Error', 'Could not save order.', 'error');
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    document.getElementById('custom-order-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('custom-submit-btn');
+      btn.disabled = true;
+
+      const fileObj = customFileInput.files[0];
+      const fileName = fileObj ? `${fileObj.name} (${(fileObj.size / 1024).toFixed(1)} KB)` : 'Custom_Model.stl';
+      const mat = document.getElementById('custom-filament-type').value;
+      const color = document.getElementById('custom-filament-color').value;
+      const notes = document.getElementById('custom-notes').value.trim();
+      const customRegion = document.getElementById('custom-region').value;
+      const customAddress = document.getElementById('custom-address').value.trim();
+
+      const customRecord = {
+        orderCode: 'STL-' + Math.floor(100000 + Math.random() * 900000),
+        orderType: 'Custom STL Order',
+        productName: `3D File: ${fileName}`,
+        filament: `${mat} — ${color}${notes ? ' | ' + notes : ''}`,
+        totalPrice: document.getElementById('custom-quote-price').value.trim(),
+        shipping: `National PH — ${customRegion}: ${customAddress}`,
+        paymentMethod: 'GCash / Card',
+        customerName: document.getElementById('custom-customer-name').value.trim(),
+        contact: document.getElementById('custom-customer-contact').value.trim(),
+        gcashRef: 'Awaiting Invoice',
+        courier: 'J&T Express PH',
+        createdAtMs: Date.now()
+      };
+
+      try {
+        await saveOrderRecord(customRecord);
+        showToast('Custom STL Saved!', `File & specs saved under #${customRecord.orderCode}.`, 'success');
+        e.target.reset();
+        document.getElementById('custom-file-label').textContent = 'Tap to select your 3D model file';
+        document.getElementById('custom-file-meta').textContent = 'Supports .STL, .OBJ, .3MF (Max 50MB)';
+        switchSlide(5);
+      } catch (err) {
+        showToast('Upload Error', 'Failed to save custom model request.', 'error');
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    window.seedSampleTestOrder = async function() {
+      const sample = CATALOG_ITEMS[Math.floor(Math.random() * CATALOG_ITEMS.length)];
+      const useCard = Math.random() > 0.5;
+      const testOrder = {
+        orderCode: 'TEST-' + Math.floor(1000 + Math.random() * 9000),
+        orderType: 'Catalog Order',
+        productName: sample.name,
+        filament: sample.filament,
+        totalPrice: `₱${(sample.price + 165).toFixed(2)}`,
+        shipping: 'National PH (J&T Express PH) — Metro Manila / NCR',
+        paymentMethod: useCard ? 'Card Payment (5318 2600 8072 4384)' : 'GCash (0976 081 8193)',
+        customerName: 'Test Buyer PH',
+        contact: '0976 081 8193',
+        gcashRef: (useCard ? 'CARD-' : '9001 ') + Math.floor(10000000 + Math.random() * 89999999),
+        courier: 'J&T Express PH',
+        createdAtMs: Date.now()
+      };
+      await saveOrderRecord(testOrder);
+      showToast('Test Order Inserted', `Simulated order #${testOrder.orderCode} added to live feed.`, 'info');
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderCatalog();
+      calculatePrintPrice();
+      updateOrderGrandTotal();
+      updatePaymentMethodUI();
+      initDatabase();
+    });
+  </script>
+</body>
+</html>
