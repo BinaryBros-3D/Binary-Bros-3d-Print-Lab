@@ -1538,5 +1538,51 @@
       initDatabase();
     });
   </script>
+<script>
+  // 1. Paste your Google Apps Script Web App URL right here:
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzfT0fWfV28LUqKWK3N6Avg5WqSIOs4vwdekqYw1HPXbTBK1Z8uGWB7G_iCM1ySJ2lX/exec';
+
+  // Order form submission handler
+  document.getElementById('orderForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const orderId = 'BB-' + Math.floor(100000 + Math.random() * 900000);
+    const orderData = {
+      orderId: orderId,
+      date: new Date().toLocaleString('en-PH', { timeZone: 'Asia/Manila' }),
+      customerName: document.getElementById('custName').value,
+      contactInfo: document.getElementById('custContact').value,
+      address: document.getElementById('custAddress').value,
+      items: document.getElementById('orderSummaryText').innerText || 'Custom 3D Print Order',
+      filament: document.getElementById('filamentType').value + ' - ' + document.getElementById('filamentColor').value,
+      paymentMethod: document.getElementById('paymentMethod').value,
+      reference: document.getElementById('paymentRef').value,
+      total: document.getElementById('grandTotal').innerText
+    };
+
+    // Save locally for instant viewing on the site
+    let savedOrders = JSON.parse(localStorage.getItem('binayBrosOrders')) || [];
+    savedOrders.unshift(orderData);
+    localStorage.setItem('binayBrosOrders', JSON.stringify(savedOrders));
+
+    // Send to Google Sheets if URL is provided
+    if (SCRIPT_URL && SCRIPT_URL !== 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL') {
+      try {
+        await fetch(SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(orderData)
+        });
+      } catch (err) {
+        console.error('Cloud sync error:', err);
+      }
+    }
+
+    alert('Order ' + orderId + ' submitted successfully! Check the Live Database Orders tab below.');
+    this.reset();
+    location.reload();
+  });
+</script>  
 </body>
 </html>
