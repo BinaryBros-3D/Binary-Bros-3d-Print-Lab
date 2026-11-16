@@ -1539,82 +1539,9 @@
     });
   </script>
 <script>
-  // ==========================================
-  // 639760818193
-  // ==========================================
-  const WHATSAPP_NUMBER = '639760818193'; // Format: country code + number without spaces or +
+  <script>
+  const WHATSAPP_NUMBER = '639760818193';
 
-  let currentSlide = 0;
-  const slides = document.querySelectorAll('.slide-panel');
-  const tabs = document.querySelectorAll('.nav-tab');
-
-  function switchSlide(index) {
-    slides.forEach((slide, idx) => {
-      if (idx === index) {
-        slide.classList.remove('hidden');
-      } else {
-        slide.classList.add('hidden');
-      }
-    });
-    tabs.forEach((tab, idx) => {
-      if (idx === index) {
-        tab.className = 'nav-tab px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap bg-cyan-500 text-black transition-all';
-      } else {
-        tab.className = 'nav-tab px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap bg-cardDark text-gray-400 hover:text-white transition-all';
-      }
-    });
-    currentSlide = index;
-    document.getElementById('slideIndicator').innerText = `Slide ${currentSlide + 1} of 7`;
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  function navigateSlide(direction) {
-    let next = currentSlide + direction;
-    if (next < 0) next = slides.length - 1;
-    if (next >= slides.length) next = 0;
-    switchSlide(next);
-  }
-
-  // Calculator Logic (Filament Grams x ₱5 + Print Hours x ₱50)
-  function calculatePrice() {
-    const grams = parseInt(document.getElementById('gramInput').value);
-    const hours = parseInt(document.getElementById('hourInput').value);
-    document.getElementById('gramVal').innerText = grams;
-    document.getElementById('hourVal').innerText = hours;
-
-    const total = (grams * 5) + (hours * 50);
-    document.getElementById('calcTotalDisplay').innerText = '₱' + total;
-    return total;
-  }
-
-  function transferCalculatorToCustom() {
-    const total = calculatePrice();
-    const grams = document.getElementById('gramInput').value;
-    const hours = document.getElementById('hourInput').value;
-    
-    document.getElementById('orderSummaryText').innerText = `Custom Calculator Print (${grams}g filament, ${hours} hrs print time)`;
-    document.getElementById('grandTotal').innerText = '₱' + total;
-    switchSlide(5); // Go to Order Form
-  }
-
-  function selectCatalogItem(itemName, price, filamentInfo) {
-    document.getElementById('orderSummaryText').innerText = `${itemName} [Filament: ${filamentInfo}]`;
-    document.getElementById('grandTotal').innerText = '₱' + price;
-    switchSlide(5); // Go to Order Form
-  }
-
-  function submitCustomOrder() {
-    const fileInput = document.getElementById('customFile');
-    const fileName = fileInput.files.length > 0 ? fileInput.files[0].name : 'Custom_Model.stl';
-    const filament = document.getElementById('customFilament').value + ' (' + document.getElementById('customColor').value + ')';
-    
-    document.getElementById('orderSummaryText').innerText = `Custom File Upload: ${fileName} | ${filament}`;
-    document.getElementById('grandTotal').innerText = '₱750';
-    switchSlide(5);
-    alert('Custom 3D file attached successfully! Complete your shipping and payment details below.');
-  }
-
-  // Order Form & Direct WhatsApp Dispatcher
   document.getElementById('orderForm').addEventListener('submit', function(e) {
     e.preventDefault();
     const orderId = 'BB-' + Math.floor(100000 + Math.random() * 900000);
@@ -1636,32 +1563,35 @@
       address: custAddress
     };
 
-    // Save locally so the built-in customer tracker still works smoothly
+    // Save locally for the site's tracker
     let orders = JSON.parse(localStorage.getItem('binayBrosOrders')) || [];
     orders.unshift(orderData);
     localStorage.setItem('binayBrosOrders', JSON.stringify(orders));
     renderOrders();
 
-    // Construct WhatsApp Message
-    const message = `🔥 *NEW 3D PRINT ORDER (${orderId})* 🔥\n\n` +
-      `👤 *Customer:* ${custName}\n` +
-      `📞 *Contact:* ${custContact}\n` +
-      `📍 *Shipping Address:* ${custAddress}\n\n` +
-      `📦 *Items:* ${items}\n` +
-      `💳 *Payment:* ${paymentMethod}\n` +
-      `🧾 *Reference #:* ${reference}\n` +
-      `💰 *Total Amount:* ${total}\n\n` +
-      `_Sent via Binay Bros 3D Print Lab Site_`;
+    // Format the clean order message
+    const orderMessage = `🔥 NEW 3D PRINT ORDER (${orderId}) 🔥\n\n` +
+      `Customer: ${custName}\n` +
+      `Contact: ${custContact}\n` +
+      `Shipping Address: ${custAddress}\n\n` +
+      `Items: ${items}\n` +
+      `Payment: ${paymentMethod}\n` +
+      `Reference #: ${reference}\n` +
+      `Total Amount: ${total}`;
 
-    const encodedMessage = encodeURIComponent(message);
-    const whatsappURL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`;
+    // Automatically copy order text to clipboard
+    navigator.clipboard.writeText(orderMessage).then(() => {
+      // Open WhatsApp chat
+      const whatsappURL = `https://wa.me/${WHATSAPP_NUMBER}?text=` + encodeURIComponent(orderMessage);
+      window.open(whatsappURL, '_blank');
 
-    // Open WhatsApp directly
-    window.open(whatsappURL, '_blank');
-
-    alert('Order ' + orderId + ' generated! Opening WhatsApp to send details directly to your lab phone.');
-    this.reset();
-    switchSlide(6); // Switch to Package Tracker
+      alert('Order ' + orderId + ' created and copied to clipboard! WhatsApp is opening so you can send it directly to the lab.');
+      this.reset();
+      switchSlide(6); // Go to Package Tracker
+    }).catch(err => {
+      console.error('Could not copy text: ', err);
+      alert('Order created! Please message us your Order ID: ' + orderId);
+    });
   });
 
   function renderOrders() {
@@ -1716,7 +1646,6 @@
   }
 
   document.addEventListener('DOMContentLoaded', renderOrders);
-</script>
 </script>
 </body>
 </html>
