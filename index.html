@@ -1540,7 +1540,7 @@
   </script>
 <script>
   // 1. Paste your Google Apps Script Web App URL right here:
-  const SCRIPT_URL = 'https://script.google.com/macros/library/d/18VNb8SPkGwM7ugcjR8PpXd6Ax3mUp3gNf6b_mYm6fYkKWxHyoN5CQx4V/1'
+  const SCRIPT_URL = 'https://api.sheetbest.com/sheets/676dd7d2-c529-490a-a558-9eeaedc6d1dc'
 
   // Order form submission handler
   document.getElementById('orderForm').addEventListener('submit', async function(e) {
@@ -1566,7 +1566,7 @@
     localStorage.setItem('binayBrosOrders', JSON.stringify(savedOrders));
 
     // Send to Google Sheets if URL is provided
-    if (SCRIPT_URL && SCRIPT_URL !== 'https://script.google.com/macros/library/d/18VNb8SPkGwM7ugcjR8PpXd6Ax3mUp3gNf6b_mYm6fYkKWxHyoN5CQx4V/1' {
+    if (SCRIPT_URL && SCRIPT_URL !== 'https://api.sheetbest.com/sheets/676dd7d2-c529-490a-a558-9eeaedc6d1dc' {
       try {
         await fetch(SCRIPT_URL, {
           method: 'POST',
@@ -1583,6 +1583,63 @@
     this.reset();
     location.reload();
   });
-</script>  
+<script>
+  // =======================================================
+  // PASTE YOUR SHEET.BEST API URL HERE FOR INSTANT CLOUD SYNC
+  // =======================================================
+  const SHEET_API_URL = 'YOUR_SHEETBEST_API_URL';
+
+  // Order form submission handler
+  document.getElementById('orderForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const orderId = 'BB-' + Math.floor(100000 + Math.random() * 900000);
+    const orderData = {
+      "Order ID": orderId,
+      "Date": new Date().toLocaleString('en-PH', { timeZone: 'Asia/Manila' }),
+      "Customer Name": document.getElementById('custName').value,
+      "Contact": document.getElementById('custContact').value,
+      "Address": document.getElementById('custAddress').value,
+      "Items / STL": document.getElementById('orderSummaryText').innerText,
+      "Filament & Color": document.getElementById('paymentMethod').value, // Or custom filament field
+      "Payment Method": document.getElementById('paymentMethod').value,
+      "Reference": document.getElementById('paymentRef').value,
+      "Total": document.getElementById('grandTotal').innerText
+    };
+
+    // 1. Save locally so it appears immediately on the site's Live Database panel
+    let savedOrders = JSON.parse(localStorage.getItem('binayBrosOrders')) || [];
+    savedOrders.unshift({
+      orderId: orderData["Order ID"],
+      date: orderData["Date"],
+      customerName: orderData["Customer Name"],
+      items: orderData["Items / STL"],
+      total: orderData["Total"],
+      address: orderData["Address"]
+    });
+    localStorage.setItem('binayBrosOrders', JSON.stringify(savedOrders));
+    renderOrders();
+
+    // 2. Send straight to your Google Sheet via Sheet.best API
+    if (SHEET_API_URL && SHEET_API_URL !== 'YOUR_SHEETBEST_API_URL') {
+      try {
+        await fetch(SHEET_API_URL, {
+          method: 'POST',
+          mode: 'cors',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(orderData)
+        });
+      } catch (err) {
+        console.error('Cloud sync error:', err);
+      }
+    }
+
+    alert('Order ' + orderId + ' successfully placed and saved!');
+    this.reset();
+    switchSlide(6); // Go to Package Tracker
+  });
+</script>
 </body>
 </html>
