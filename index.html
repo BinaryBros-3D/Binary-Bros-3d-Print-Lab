@@ -1539,65 +1539,184 @@
     });
   </script>
 <script>
-<script>
-  // =======================================================
-  //https://api.sheetbest.com/sheets/676dd7d2-c529-490a-a558-9eeaedc6d1dc
-  // =======================================================
-  const SHEET_API_URL = https://api.sheetbest.com/sheets/676dd7d2-c529-490a-a558-9eeaedc6d1dc;
+  // ==========================================
+  // 09760818193
+  // ==========================================
+  const WHATSAPP_NUMBER = '639760818193'; // Format: country code + number without spaces or +
 
-  // Order form submission handler
-  document.getElementById('orderForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
+  let currentSlide = 0;
+  const slides = document.querySelectorAll('.slide-panel');
+  const tabs = document.querySelectorAll('.nav-tab');
+
+  function switchSlide(index) {
+    slides.forEach((slide, idx) => {
+      if (idx === index) {
+        slide.classList.remove('hidden');
+      } else {
+        slide.classList.add('hidden');
+      }
+    });
+    tabs.forEach((tab, idx) => {
+      if (idx === index) {
+        tab.className = 'nav-tab px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap bg-cyan-500 text-black transition-all';
+      } else {
+        tab.className = 'nav-tab px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap bg-cardDark text-gray-400 hover:text-white transition-all';
+      }
+    });
+    currentSlide = index;
+    document.getElementById('slideIndicator').innerText = `Slide ${currentSlide + 1} of 7`;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function navigateSlide(direction) {
+    let next = currentSlide + direction;
+    if (next < 0) next = slides.length - 1;
+    if (next >= slides.length) next = 0;
+    switchSlide(next);
+  }
+
+  // Calculator Logic (Filament Grams x ₱5 + Print Hours x ₱50)
+  function calculatePrice() {
+    const grams = parseInt(document.getElementById('gramInput').value);
+    const hours = parseInt(document.getElementById('hourInput').value);
+    document.getElementById('gramVal').innerText = grams;
+    document.getElementById('hourVal').innerText = hours;
+
+    const total = (grams * 5) + (hours * 50);
+    document.getElementById('calcTotalDisplay').innerText = '₱' + total;
+    return total;
+  }
+
+  function transferCalculatorToCustom() {
+    const total = calculatePrice();
+    const grams = document.getElementById('gramInput').value;
+    const hours = document.getElementById('hourInput').value;
     
+    document.getElementById('orderSummaryText').innerText = `Custom Calculator Print (${grams}g filament, ${hours} hrs print time)`;
+    document.getElementById('grandTotal').innerText = '₱' + total;
+    switchSlide(5); // Go to Order Form
+  }
+
+  function selectCatalogItem(itemName, price, filamentInfo) {
+    document.getElementById('orderSummaryText').innerText = `${itemName} [Filament: ${filamentInfo}]`;
+    document.getElementById('grandTotal').innerText = '₱' + price;
+    switchSlide(5); // Go to Order Form
+  }
+
+  function submitCustomOrder() {
+    const fileInput = document.getElementById('customFile');
+    const fileName = fileInput.files.length > 0 ? fileInput.files[0].name : 'Custom_Model.stl';
+    const filament = document.getElementById('customFilament').value + ' (' + document.getElementById('customColor').value + ')';
+    
+    document.getElementById('orderSummaryText').innerText = `Custom File Upload: ${fileName} | ${filament}`;
+    document.getElementById('grandTotal').innerText = '₱750';
+    switchSlide(5);
+    alert('Custom 3D file attached successfully! Complete your shipping and payment details below.');
+  }
+
+  // Order Form & Direct WhatsApp Dispatcher
+  document.getElementById('orderForm').addEventListener('submit', function(e) {
+    e.preventDefault();
     const orderId = 'BB-' + Math.floor(100000 + Math.random() * 900000);
+    
+    const custName = document.getElementById('custName').value;
+    const custContact = document.getElementById('custContact').value;
+    const custAddress = document.getElementById('custAddress').value;
+    const items = document.getElementById('orderSummaryText').innerText;
+    const paymentMethod = document.getElementById('paymentMethod').value;
+    const reference = document.getElementById('paymentRef').value;
+    const total = document.getElementById('grandTotal').innerText;
+
     const orderData = {
-      "Order ID": orderId,
-      "Date": new Date().toLocaleString('en-PH', { timeZone: 'Asia/Manila' }),
-      "Customer Name": document.getElementById('custName').value,
-      "Contact": document.getElementById('custContact').value,
-      "Address": document.getElementById('custAddress').value,
-      "Items / STL": document.getElementById('orderSummaryText').innerText,
-      "Filament & Color": document.getElementById('paymentMethod').value, // Or custom filament field
-      "Payment Method": document.getElementById('paymentMethod').value,
-      "Reference": document.getElementById('paymentRef').value,
-      "Total": document.getElementById('grandTotal').innerText
+      orderId,
+      date: new Date().toLocaleString('en-PH', { timeZone: 'Asia/Manila' }),
+      customerName: custName,
+      items,
+      total,
+      address: custAddress
     };
 
-    // 1. Save locally so it appears immediately on the site's Live Database panel
-    let savedOrders = JSON.parse(localStorage.getItem('binayBrosOrders')) || [];
-    savedOrders.unshift({
-      orderId: orderData["Order ID"],
-      date: orderData["Date"],
-      customerName: orderData["Customer Name"],
-      items: orderData["Items / STL"],
-      total: orderData["Total"],
-      address: orderData["Address"]
-    });
-    localStorage.setItem('binayBrosOrders', JSON.stringify(savedOrders));
+    // Save locally so the built-in customer tracker still works smoothly
+    let orders = JSON.parse(localStorage.getItem('binayBrosOrders')) || [];
+    orders.unshift(orderData);
+    localStorage.setItem('binayBrosOrders', JSON.stringify(orders));
     renderOrders();
 
-    // 2. Send straight to your Google Sheet via Sheet.best API
-    if (SHEET_API_URL && SHEET_API_URL !== https://api.sheetbest.com/sheets/676dd7d2-c529-490a-a558-9eeaedc6d1dc) {
-      try {
-        await fetch(SHEET_API_URL, {
-          method: 'POST',
-          mode: 'cors',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(orderData)
-        });
-      } catch (err) {
-        console.error('Cloud sync error:', err);
-      }
-    }
+    // Construct WhatsApp Message
+    const message = `🔥 *NEW 3D PRINT ORDER (${orderId})* 🔥\n\n` +
+      `👤 *Customer:* ${custName}\n` +
+      `📞 *Contact:* ${custContact}\n` +
+      `📍 *Shipping Address:* ${custAddress}\n\n` +
+      `📦 *Items:* ${items}\n` +
+      `💳 *Payment:* ${paymentMethod}\n` +
+      `🧾 *Reference #:* ${reference}\n` +
+      `💰 *Total Amount:* ${total}\n\n` +
+      `_Sent via Binay Bros 3D Print Lab Site_`;
 
-    alert('Order ' + orderId + ' successfully placed and saved!');
+    const encodedMessage = encodeURIComponent(message);
+    const whatsappURL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`;
+
+    // Open WhatsApp directly
+    window.open(whatsappURL, '_blank');
+
+    alert('Order ' + orderId + ' generated! Opening WhatsApp to send details directly to your lab phone.');
     this.reset();
-    switchSlide(6); // Go to Package Tracker
+    switchSlide(6); // Switch to Package Tracker
   });
+
+  function renderOrders() {
+    const container = document.getElementById('liveOrdersList');
+    const orders = JSON.parse(localStorage.getItem('binayBrosOrders')) || [];
+    if (orders.length === 0) {
+      container.innerHTML = '<p class="text-xs text-gray-500 text-center py-4">No local orders saved yet.</p>';
+      return;
+    }
+    container.innerHTML = orders.map(o => `
+      <div class="p-3 rounded-xl bg-slateDark border border-borderDark flex justify-between items-center text-xs">
+        <div>
+          <span class="font-bold text-cyan-400">${o.orderId}</span> - ${o.customerName}<br>
+          <span class="text-gray-400">${o.items}</span>
+        </div>
+        <div class="text-right">
+          <span class="font-bold text-white">${o.total}</span><br>
+          <span class="text-[10px] text-gray-500">${o.date}</span>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function addTestEntry() {
+    const testOrder = {
+      orderId: 'BB-' + Math.floor(100000 + Math.random() * 900000),
+      date: new Date().toLocaleString('en-PH', { timeZone: 'Asia/Manila' }),
+      customerName: 'Test Customer (Davao)',
+      address: 'J.P. Laurel Ave, Davao City',
+      items: 'Articulated Crystal Dragon',
+      total: '₱650'
+    };
+    let orders = JSON.parse(localStorage.getItem('binayBrosOrders')) || [];
+    orders.unshift(testOrder);
+    localStorage.setItem('binayBrosOrders', JSON.stringify(orders));
+    renderOrders();
+  }
+
+  function trackOrder() {
+    const id = document.getElementById('trackIdInput').value.trim().toUpperCase();
+    const orders = JSON.parse(localStorage.getItem('binayBrosOrders')) || [];
+    const match = orders.find(o => o.orderId === id) || {
+      orderId: id || 'BB-TEST',
+      customerName: 'Sample Customer',
+      address: 'National Highway, Davao Region'
+    };
+
+    document.getElementById('resOrderId').innerText = 'Order #' + match.orderId;
+    document.getElementById('resName').innerText = match.customerName;
+    document.getElementById('resAddress').innerText = match.address || 'National Delivery Address';
+    document.getElementById('trackResult').classList.remove('hidden');
+  }
+
+  document.addEventListener('DOMContentLoaded', renderOrders);
 </script>
-  });
 </script>
 </body>
 </html>
